@@ -2,12 +2,12 @@ package view;
 
 
 import java.awt.EventQueue;
-import java.awt.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import controller.Config;
+import controller.Controller;
+
 import java.awt.Font;
 import javax.swing.ImageIcon;
 import javax.swing.GroupLayout;
@@ -16,24 +16,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JCheckBox;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.Button;
-import java.util.ArrayList;
 
-import javax.swing.JProgressBar;
 
 public class View {
 
 	private JFrame frame;
-	Config conf = new Config();
 	JLabel lblMissingPkg;
 	private JLabel lblTftpUpdate;
 	JButton btnInstallPkg;
-	private JProgressBar progressBar;
-	ArrayList<String> pkgNeeded = new ArrayList<String>();
+
+	Controller ctrl = new Controller(this);
 
 	/**
 	 * Launch the application.
@@ -78,47 +73,14 @@ public class View {
 		lblMissingPkg.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/question.png")));
 		lblMissingPkg.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
 		
-		progressBar = new JProgressBar();
-		progressBar.setVisible(false);
-		
 		btnInstallPkg = new JButton("Install");
 		btnInstallPkg.setVisible(false);
 		btnInstallPkg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				btnInstallPkg.setVisible(false);
-				System.out.println("Installing packages...");
-				
-				// prompt sudo password
-				JPanel panel = new JPanel();
-				JLabel label = new JLabel("Enter a password:");
-				JPasswordField pass = new JPasswordField(10);
-				panel.add(label);
-				panel.add(pass);
-				String[] options = new String[]{"OK", "Cancel"};
-				int option = JOptionPane.showOptionDialog(null, panel, "Sudo Password",
-				                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-				                         null, options, options[1]);
-				
-				if(option == 0) // pressing OK button
-				{
-				    char[] password = pass.getPassword();
-					progressBar.setVisible(true);
-					progressBar.setStringPainted(true);
-					int cursor = 0;
-					progressBar.setValue(cursor);
-					int step = 100 / pkgNeeded.size();
-					System.out.println(String.valueOf(step));
-					for(String s : pkgNeeded){
-						System.out.println(s);
-						if(conf.installPkg(s, new String(password))){
-							cursor += step;
-							progressBar.setValue(cursor);
-						}
-
-					}
-					updatePackageLbls();
-				}
-				
+				System.out.println("Click from user to install packages");
+				ctrl.installTftpServerPackages();
+				updatePackageLbls();
 			}
 		});
 		
@@ -130,20 +92,17 @@ public class View {
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(45)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
 									.addGap(86)
 									.addComponent(lblMissingPkg, GroupLayout.PREFERRED_SIZE, 317, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnInstallPkg))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(lblTftpUpdate)
-									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addComponent(progressBar, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE))))
+								.addComponent(lblTftpUpdate)))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(24)
 							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(39, Short.MAX_VALUE))
+					.addContainerGap(31, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -151,9 +110,7 @@ public class View {
 					.addGap(12)
 					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
 					.addGap(10)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblTftpUpdate)
-						.addComponent(progressBar, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(lblTftpUpdate)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnInstallPkg)
@@ -165,50 +122,41 @@ public class View {
 		updatePackageLbls();
 	}
 	
-	private void updatePackageLbls(){
-		int needPkg = 0;
-		String pkgToInstall = "";
-		if(!conf.pkgIsInstalled("tftp")){
-			pkgToInstall = "tftp";
-			pkgNeeded.add("tftp");
-			needPkg ++;
+	public void updatePackageLbls(){
+		StringBuilder message = new StringBuilder ();
+		if(ctrl.tftpServerMissingPkg(message)>0){
+			btnInstallPkg.setVisible(true);
 			lblMissingPkg.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/error.png")));
 		}
-		if(!conf.pkgIsInstalled("tftpd")){
-			if(needPkg>0)
-				pkgToInstall += ", ";
-			pkgToInstall += "tftpd";
-			pkgNeeded.add("tftpd");
-			needPkg ++;
-			lblMissingPkg.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/error.png")));
-		}
-		if(!conf.pkgIsInstalled("xinetd")){
-			if(needPkg > 0)
-				pkgToInstall += " and xinetd";
-			else
-				pkgToInstall += ", xinetd";
-			pkgNeeded.add("xinetd");
-			needPkg ++;
-			lblMissingPkg.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/error.png")));
-		}
-		
-		if(needPkg == 0){
-			pkgToInstall = "Every needed packages are installed.";
-			ImageIcon iconOk = new ImageIcon("icons/tick.png");
+		else{
 			lblMissingPkg.setIcon(new ImageIcon("icons/tick.png"));
 		}
-
-		else {
-			if (needPkg == 1)
-				pkgToInstall += " package is not installed.";
-			else
-				pkgToInstall += " packages are not installed.";
-			
-			btnInstallPkg.setVisible(true);
+		lblMissingPkg.setText(message.toString());
+	}
+	
+	/*
+	 * Input dialog to get 
+	 * return : the password if any password is entered
+	 * 			otherwise, a null pointer
+	 */
+	public String promptPassword(String dialogInputName){
+		// prompt sudo password
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel("Enter the password:");
+		JPasswordField pass = new JPasswordField(10);
+		panel.add(label);
+		panel.add(pass);
+		String[] options = new String[]{"OK", "Cancel"};
+		int option = JOptionPane.showOptionDialog(null, panel, dialogInputName,
+		                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+		                         null, options, options[1]);
+		
+		if(option == 0) // pressing OK button
+		{
+		    char[] password = pass.getPassword();
+		    return new String(password);
 		}
-
-		
-		
-		lblMissingPkg.setText(pkgToInstall);
+		else
+			return null;
 	}
 }

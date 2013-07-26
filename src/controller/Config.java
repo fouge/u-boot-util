@@ -1,15 +1,56 @@
 package controller;
 
+import java.util.ArrayList;
+
 
 public class Config {
+	
+	ArrayList<String> pkgNeeded = new ArrayList<String>();
 	
 	public Config(){
 		
 	}
 
+	public int probePkgNeeded(StringBuilder message){
+		int needPkg = 0;
+		if(!this.pkgIsInstalled("tftp")){
+			message.append("tftp");
+			this.pkgNeeded.add("tftp");
+			needPkg ++;
+		}
+		if(!this.pkgIsInstalled("tftpd")){
+			if(needPkg>0)
+				message.append(", ");
+			message.append("tftpd");
+			this.pkgNeeded.add("tftpd");
+			needPkg ++;
+			}
+		if(!this.pkgIsInstalled("xinetd")){
+			if(needPkg > 0)
+				message.append(" and xinetd");
+			else			
+				message.append("xinetd");
+			pkgNeeded.add("xinetd");
+			needPkg ++;
+			}
+		
+		if(needPkg == 0){
+			message.append("Every needed packages are installed.");
+		}
+
+		else {
+			if (needPkg == 1)
+				message.append(" package is not installed.");
+			else
+				message.append(" packages are not installed.");
+		}
+
+		return needPkg;
+	}
+	
+	
 	public boolean pkgIsInstalled(String name){
 		
-        String s;
         Process p;
         int ret = 1;
         try {
@@ -49,5 +90,11 @@ public class Config {
         	e.printStackTrace();
         }
         	return (ret == 0);
+	}
+
+	public void installMissingPkg(String passwd) {
+		for(String s : this.pkgNeeded){
+			this.installPkg(s, passwd);
+		}
 	}
 }
