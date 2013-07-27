@@ -1,7 +1,10 @@
 package view;
 
 
+import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Insets;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.Border;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -27,8 +31,10 @@ public class View {
 	JLabel lblMissingPkg;
 	private JLabel lblTftpUpdate;
 	JButton btnInstallPkg;
+	JButton btnConfigure;
 
-	Controller ctrl = new Controller(this);
+	Controller ctrl;
+	private JLabel lblServerConfigured;
 
 	/**
 	 * Launch the application.
@@ -59,7 +65,7 @@ public class View {
 	 */
 	private void initialize() {
 		frame = new JFrame("U-Boot Util");
-		frame.setBounds(100, 100, 579, 300);
+		frame.setBounds(100, 100, 579, 418);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JLabel lblNewLabel = new JLabel("U-Boot Util");
@@ -79,57 +85,120 @@ public class View {
 			public void actionPerformed(ActionEvent arg0) {
 				btnInstallPkg.setVisible(false);
 				System.out.println("Click from user to install packages");
+				/*
+				 * Install packages
+				 */
 				ctrl.installTftpServerPackages();
-				updatePackageLbls();
+				/*
+				 * Update view
+				 */
+				ctrl.tftpServerMissingPkg();
 			}
 		});
 		
+		lblServerConfigured = new JLabel("");
+		lblServerConfigured.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/question.png")));
+		lblServerConfigured.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
+		
+		this.btnConfigure = new JButton("Configure");
+		this.btnConfigure.setVisible(false);
+		this.btnConfigure.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				btnConfigure.setVisible(false);
+				
+				// TODO configure server
+			}
+		});
+		
+		JPanel panelServerConfiguration = new JPanel();
+		panelServerConfiguration.setBorder(new Border() {
+			
+			@Override
+			public void paintBorder(Component arg0, Graphics arg1, int arg2, int arg3,
+					int arg4, int arg5) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public boolean isBorderOpaque() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public Insets getBorderInsets(Component arg0) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 		
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
+			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(91)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(45)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addGap(86)
-									.addComponent(lblMissingPkg, GroupLayout.PREFERRED_SIZE, 317, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnInstallPkg))
-								.addComponent(lblTftpUpdate)))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(24)
-							.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(31, Short.MAX_VALUE))
+						.addComponent(lblMissingPkg, GroupLayout.PREFERRED_SIZE, 317, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblServerConfigured, GroupLayout.PREFERRED_SIZE, 317, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnConfigure, 0, 0, Short.MAX_VALUE)
+						.addComponent(btnInstallPkg, GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE))
+					.addGap(40))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap(248, Short.MAX_VALUE)
+					.addComponent(lblTftpUpdate)
+					.addGap(240))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(23)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(panelServerConfiguration, GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
+						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(12)
+					.addContainerGap()
 					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-					.addGap(10)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(lblTftpUpdate)
+					.addGap(4)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblMissingPkg)
+						.addComponent(btnInstallPkg))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnInstallPkg)
-						.addComponent(lblMissingPkg))
-					.addGap(185))
+						.addComponent(btnConfigure)
+						.addComponent(lblServerConfigured, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(panelServerConfiguration, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(107, Short.MAX_VALUE))
 		);
+		
+		
+		JLabel lblServerConf = new JLabel("Server configuration");
+		lblServerConf.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
+		panelServerConfiguration.add(lblServerConf);
 		frame.getContentPane().setLayout(groupLayout);
 	
-		updatePackageLbls();
+		
+		/*
+		 * Let the controller manage the app
+		 */
+		this.ctrl = new Controller(this);
 	}
 	
-	public void updatePackageLbls(){
-		StringBuilder message = new StringBuilder ();
-		if(ctrl.tftpServerMissingPkg(message)>0){
-			btnInstallPkg.setVisible(true);
-			lblMissingPkg.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/error.png")));
+	public void updatePackageLbls(String message, boolean pkgMissing){
+		if(!pkgMissing){
+			lblMissingPkg.setIcon(new ImageIcon("icons/tick.png"));
 		}
 		else{
-			lblMissingPkg.setIcon(new ImageIcon("icons/tick.png"));
+			btnInstallPkg.setVisible(true);
+			lblMissingPkg.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/error.png")));
 		}
 		lblMissingPkg.setText(message.toString());
 	}
