@@ -1,11 +1,13 @@
 package view;
 
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -15,14 +17,21 @@ import java.awt.Font;
 import javax.swing.ImageIcon;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.GridLayout;
+import javax.swing.BoxLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.FlowLayout;
 
 
 public class View {
@@ -32,9 +41,15 @@ public class View {
 	private JLabel lblTftpUpdate;
 	JButton btnInstallPkg;
 	JButton btnConfigure;
+	
+	JFileChooser chooser;
 
 	Controller ctrl;
 	private JLabel lblServerConfigured;
+	private JLabel label_1;
+	private JLabel label_2;
+	
+	
 
 	/**
 	 * Launch the application.
@@ -96,9 +111,58 @@ public class View {
 			}
 		});
 		
+		JPanel panelServerConfiguration = new JPanel();
+		panelServerConfiguration.setBorder(BorderFactory.createLineBorder(Color.gray));
+
+		
+		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(91)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(lblTftpUpdate)
+							.addContainerGap())
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(lblMissingPkg, GroupLayout.PREFERRED_SIZE, 317, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnInstallPkg, GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+							.addGap(40))))
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(23)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(panelServerConfiguration, GroupLayout.PREFERRED_SIZE, 533, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(21, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblTftpUpdate)
+					.addGap(10)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblMissingPkg)
+						.addComponent(btnInstallPkg))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(panelServerConfiguration, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(145, Short.MAX_VALUE))
+		);
+		
+		
+		JLabel lblServerConf = new JLabel("Server configuration");
+		lblServerConf.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
+		
+		label_1 = new JLabel("");
+		
 		lblServerConfigured = new JLabel("");
 		lblServerConfigured.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/question.png")));
 		lblServerConfigured.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
+		
+		label_2 = new JLabel("");
 		
 		this.btnConfigure = new JButton("Configure");
 		this.btnConfigure.setVisible(false);
@@ -107,82 +171,48 @@ public class View {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				btnConfigure.setVisible(false);
-				
-				// TODO configure server
+				/*
+				 * Configure TFTP server
+				 */
+				ctrl.configureTftpServer();
 			}
 		});
-		
-		JPanel panelServerConfiguration = new JPanel();
-		panelServerConfiguration.setBorder(new Border() {
-			
-			@Override
-			public void paintBorder(Component arg0, Graphics arg1, int arg2, int arg3,
-					int arg4, int arg5) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean isBorderOpaque() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public Insets getBorderInsets(Component arg0) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		});
-		
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(91)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblMissingPkg, GroupLayout.PREFERRED_SIZE, 317, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblServerConfigured, GroupLayout.PREFERRED_SIZE, 317, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnConfigure, 0, 0, Short.MAX_VALUE)
-						.addComponent(btnInstallPkg, GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE))
-					.addGap(40))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap(248, Short.MAX_VALUE)
-					.addComponent(lblTftpUpdate)
-					.addGap(240))
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(23)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(panelServerConfiguration, GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
-						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE))
+		GroupLayout gl_panelServerConfiguration = new GroupLayout(panelServerConfiguration);
+		gl_panelServerConfiguration.setHorizontalGroup(
+			gl_panelServerConfiguration.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelServerConfiguration.createSequentialGroup()
+					.addGroup(gl_panelServerConfiguration.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelServerConfiguration.createSequentialGroup()
+							.addGap(174)
+							.addComponent(lblServerConf)
+							.addGap(5)
+							.addComponent(label_1))
+						.addGroup(gl_panelServerConfiguration.createSequentialGroup()
+							.addGap(31)
+							.addComponent(lblServerConfigured)))
+					.addContainerGap(217, Short.MAX_VALUE))
+				.addGroup(Alignment.TRAILING, gl_panelServerConfiguration.createSequentialGroup()
+					.addContainerGap(402, Short.MAX_VALUE)
+					.addComponent(btnConfigure, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(lblTftpUpdate)
-					.addGap(4)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblMissingPkg)
-						.addComponent(btnInstallPkg))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnConfigure)
-						.addComponent(lblServerConfigured, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(panelServerConfiguration, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(107, Short.MAX_VALUE))
+		gl_panelServerConfiguration.setVerticalGroup(
+			gl_panelServerConfiguration.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelServerConfiguration.createSequentialGroup()
+					.addGroup(gl_panelServerConfiguration.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelServerConfiguration.createSequentialGroup()
+							.addGap(13)
+							.addComponent(lblServerConf))
+						.addGroup(gl_panelServerConfiguration.createSequentialGroup()
+							.addGap(21)
+							.addComponent(label_1)))
+					.addGap(7)
+					.addComponent(lblServerConfigured)
+					.addPreferredGap(ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+					.addComponent(btnConfigure)
+					.addContainerGap())
 		);
-		
-		
-		JLabel lblServerConf = new JLabel("Server configuration");
-		lblServerConf.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
-		panelServerConfiguration.add(lblServerConf);
+		panelServerConfiguration.setLayout(gl_panelServerConfiguration);
 		frame.getContentPane().setLayout(groupLayout);
 	
 		
@@ -201,6 +231,17 @@ public class View {
 			lblMissingPkg.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/error.png")));
 		}
 		lblMissingPkg.setText(message.toString());
+	}
+	
+	public void updateConfigureTftpLbls(String message, boolean serverIsConfigured){
+		if(serverIsConfigured){
+			lblServerConfigured.setIcon(new ImageIcon("icons/tick.png"));
+		}
+		else{
+			btnConfigure.setVisible(true);
+			lblServerConfigured.setIcon(new ImageIcon(View.class.getResource("/javax/swing/plaf/metal/icons/ocean/error.png")));
+		}
+		lblServerConfigured.setText(message.toString());
 	}
 	
 	/*
@@ -228,4 +269,32 @@ public class View {
 		else
 			return null;
 	}
+	
+	
+	public String promptDirectory(String title){
+		int result;
+		JPanel panel = new JPanel();
+	    chooser = new JFileChooser(); 
+	    chooser.setCurrentDirectory(new java.io.File("."));
+	    chooser.setDialogTitle(title);
+	    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	    //
+	    // disable the "All files" option.
+	    //
+	    chooser.setAcceptAllFileFilterUsed(false);
+	    //    
+	    if (chooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) { 
+	      System.out.println("getCurrentDirectory(): " 
+	         +  chooser.getCurrentDirectory());
+	      System.out.println("getSelectedFile() : " 
+	         +  chooser.getSelectedFile());
+			return chooser.getSelectedFile().toString();
+	      }
+	    else {
+	      System.out.println("No Selection ");
+	      return "No Selection";
+	      }
+
+	}
+	
 }

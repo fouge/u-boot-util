@@ -1,6 +1,16 @@
 package controller;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+
 import view.View;
+
+
 
 public class Controller {
 	
@@ -14,12 +24,27 @@ public class Controller {
 		/*
 		 * Check if packages are installed
 		 */
-		this.tftpServerMissingPkg();
-		
+		if(!this.tftpServerMissingPkg())
+		{
 		/*
 		 * Check if TFTP server is configured
 		 */
-		this.tftpServerIsConfigured();
+			if(this.tftpServerIsConfigured())
+			{
+				/*
+				 * TODO Display settings
+				 */
+				
+			}
+			else{
+				/*
+				 * TODO Prompt for the wanted settings
+				 * 
+				 * http://stackoverflow.com/questions/10083447/selecting-folder-destination-in-java
+				 */
+			}
+				
+		}
 	}
 
 	/*
@@ -46,10 +71,57 @@ public class Controller {
 	/*
 	 * Check if TFTP server is configured and launched
 	 */
-	public void tftpServerIsConfigured() {
+	public boolean tftpServerIsConfigured() {
 		// TODO Check if there is "tftp" file in /etc/xinetd.d
+		try  
+		{
+			FileReader fstream = new FileReader("/etc/xinetd.d/tftp");
+		    BufferedReader in = new BufferedReader(fstream);
+		    
+		    /*
+		     * TODO read settings and pass these to Config
+		     */
+		    System.out.println(in.readLine());
+		    System.out.println(in.readLine());
+		    return true;
+		}
+		catch (Exception e)
+		{
+		    System.err.println(e.getClass().getSimpleName() + " : " + e.getMessage());
+		    
+		    if(e.getClass().getSimpleName().equals("FileNotFoundException")){
+
+		    	view.updateConfigureTftpLbls("Configuration file not found.", false);
 		
+				return false;
+		    }
+		}
+		return false;
+	}
+	
+	public void configureTftpServer(){
+		/*
+		 * Ask for TFTP directory
+		 */
+		String path = this.view.promptDirectory("Directory where files will be available via TFTP");
 		
-		// TODO If server is configured, display settings, else, configure it
+		/*
+		 * TODO create server settings file
+		 */
+		String confFile = "service tftp { \n protocol = udp \nport = 69\nsocket_type = dgram\nwait = yes\nuser = nobody\nserver = /usr/sbin/in.tftpd\nserver_args  = "+path+"\ndisable = no }";
+
+		FileWriter fstream;
+		try {
+			fstream = new FileWriter("tftp", false);
+		    BufferedWriter out = new BufferedWriter(fstream);
+		    out.flush();
+		    out.write("salut");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		tftpServerIsConfigured();
 	}
 }
