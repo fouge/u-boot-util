@@ -69,7 +69,10 @@ public class Config {
 	}
 	
 	
-	
+	/*
+	 * Install package from name (sudo apt-get install name)
+	 * Return true if the package is installed, false otherwise
+	 */
 	public boolean installPkg(String name, String sudoPasswd){
 		
         Process p;   
@@ -92,9 +95,11 @@ public class Config {
         	return (ret == 0);
 	}
 
-	public void installMissingPkg(String passwd) {
+	public boolean installMissingPkg(String passwd) {
+		boolean ret = true ;
 		for(String s : this.pkgNeeded){
-			this.installPkg(s, passwd);
+			ret &= this.installPkg(s, passwd);
 		}
+		return ret;
 	}
 }
