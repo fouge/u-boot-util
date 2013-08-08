@@ -1,12 +1,20 @@
 package controller;
 
+import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.CharBuffer;
 import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import view.View;
 
@@ -32,19 +40,16 @@ public class Controller {
 		if(this.tftpServerIsConfigured())
 		{
 				/*
-				 * TODO Display settings
+				 * Display settings
 				 */
-				
+				this.displayTftpSettings();
 		}
-		else{
-				/*
-				 * TODO Prompt for the wanted settings
-				 * 
-				 * http://stackoverflow.com/questions/10083447/selecting-folder-destination-in-java
-				 */
+		else{ // an error occured
+			// update view
+	    	view.updateConfigureTftpLbls("Configuration file not found.", false);
+			
 		}
-				
-		}
+	}
 
 	/*
 	 * Install every missing packages needed to set up a TFTP server
@@ -80,74 +85,106 @@ public class Controller {
 
 	/*
 	 * Check if TFTP server is configured and launched
+	 * return true if configured
 	 */
 	public boolean tftpServerIsConfigured() {
-		// TODO Check if there is "tftp" file in /etc/xinetd.d
+		
+		String tftpDirectory = new String();
+		// Check if there is "tftp" file in /etc/xinetd.d
 		try  
 		{
 			FileReader fstream = new FileReader("/etc/xinetd.d/tftp");
-		    BufferedReader in = new BufferedReader(fstream);
-		    
-		    /*
-		     * TODO read settings and pass these to Config
-		     */
-		    System.out.println(in.readLine());
-		    System.out.println(in.readLine());
-		    return true;
+
+			/*
+			 * If here, file exists and can be opened
+			 */
+		    tftpDirectory = this.displayTftpSettings();
+		    if(tftpDirectory.length()>0)
+		    	this.view.updateConfigureTftpLbls("TFTP server files are placed in : "+tftpDirectory, true);
+		    else
+		    	this.view.updateConfigureTftpLbls("Incorrect configuration file.", false);
 		}
-		catch (Exception e)
+		catch (FileNotFoundException e)
 		{
 		    System.err.println(e.getClass().getSimpleName() + " : " + e.getMessage());
-		    
-		    if(e.getClass().getSimpleName().equals("FileNotFoundException")){
-
-		    	view.updateConfigureTftpLbls("Configuration file not found.", false);
-		
-				return false;
-		    }
+		    return false;
 		}
-		return false;
+		return true;
 	}
 	
-	public void configureTftpServer(){
+	private String displayTftpSettings() {
+	    BufferedReader in;
+		try {
+			in = new BufferedReader(new FileReader("/etc/xinetd.d/tftp"));
+			
+			/*
+			 * TODO parser
+			 */
+			String line = in.readLine();
+			while(line != null){
+				if (line.contains("server_args")){
+					System.out.println(line);
+					String[] splitedLine = line.split(" ");
+					return splitedLine[splitedLine.length-1];
+				}
+				line = in.readLine();
+			}
+			
+			/* Matcher matcher = Pattern.compile("(?<=server_args =/).*").matcher(in.rea);
+			matcher.find();
+			System.out.println(matcher.group()); */
+		    	
+		} catch (FileNotFoundException e) { // open file exception
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	public boolean configureTftpServer(){
 		/*
 		 * Ask for TFTP directory
 		 */
 		String path = this.view.promptDirectory("Directory where files will be available via TFTP");
 		
 		/*
-		 * TODO create server settings file
+		 * create server settings file
 		 */
 		// Ask sudo pass if not defined
 		if(this.sudoPass == null){
 			String pass = view.promptPassword("Sudo Password");
 			if(pass == null) // cancelled
-				return;
+				return false;
 			else
 				this.sudoPass = new String(pass);
 		}
 		
 		
-		if(this.shcommand("echo "+this.sudoPass+" | sudo touch /etc/xinetd.d/tftp") && this.shcommand("chmod 777 /etc/xinetd.d/tftp"))
+		if(this.shcommand("echo "+this.sudoPass+" | sudo -S touch /etc/xinetd.d/tftp") && this.shcommand("echo "+this.sudoPass+" | sudo -S chmod 777 /etc/xinetd.d/tftp"))
 		{
-			String confFile = "service tftp { \n protocol = udp \nport = 69\nsocket_type = dgram\nwait = yes\nuser = nobody\nserver = /usr/sbin/in.tftpd\nserver_args  = "+path+"\ndisable = no }";
+			String confFile = "service tftp \n{ \nprotocol = udp \nport = 69\nsocket_type = dgram\nwait = yes\nuser = nobody\nserver = /usr/sbin/in.tftpd\nserver_args  = "+path+"\ndisable = no \n}\n";
 	
-			FileWriter fstream;
+			
+			PrintWriter writer;
 			try {
-				fstream = new FileWriter("tftp", false);
-			    BufferedWriter out = new BufferedWriter(fstream);
-			    out.flush();
-			    out.write("salut");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				writer = new PrintWriter("/etc/xinetd.d/tftp");
+				writer.println(confFile);
+				writer.close();
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+				return false;
 			}
 		}
 		else{
-			// TODO creating tftp file doesn't work
+			return false;
 		}
 		
-		tftpServerIsConfigured();
+		if(tftpServerIsConfigured()){
+			return true;
+		}
+		else
+			return false;
 	}
 
 	private boolean shcommand(String string) {
@@ -167,6 +204,16 @@ public class Controller {
         } catch (Exception e) {}
         
         	return (ret == 0);
-		
 	}
+	
+	public boolean connectTtyACM(){
+		
+		try {
+			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier("/dev/ttyACM0");
+		} catch (NoSuchPortException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 }

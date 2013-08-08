@@ -98,7 +98,6 @@ public class View {
 		btnInstallPkg.setVisible(false);
 		btnInstallPkg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				btnInstallPkg.setVisible(false);
 				System.out.println("Click from user to install packages");
 				/*
 				 * Install packages
@@ -107,7 +106,8 @@ public class View {
 				/*
 				 * Update view
 				 */
-				ctrl.tftpServerMissingPkg();
+				if(!ctrl.tftpServerMissingPkg())
+					btnInstallPkg.setVisible(false);
 			}
 		});
 		
@@ -170,13 +170,14 @@ public class View {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				btnConfigure.setVisible(false);
 				/*
 				 * Configure TFTP server
 				 */
-				ctrl.configureTftpServer();
+				if(ctrl.configureTftpServer())
+					btnConfigure.setVisible(false);
 			}
 		});
+		
 		GroupLayout gl_panelServerConfiguration = new GroupLayout(panelServerConfiguration);
 		gl_panelServerConfiguration.setHorizontalGroup(
 			gl_panelServerConfiguration.createParallelGroup(Alignment.LEADING)
