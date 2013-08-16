@@ -26,8 +26,11 @@ import javax.swing.JButton;
 import ctrl.Controller;
 import javax.swing.JTextArea;
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.text.ParseException;
+
 import javax.swing.JList;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -36,6 +39,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
+import javax.swing.JTree;
+import javax.swing.text.MaskFormatter;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.JFormattedTextField;
+import javax.swing.border.EtchedBorder;
+import java.awt.SystemColor;
 
 public class View {
 	
@@ -83,6 +94,7 @@ public class View {
 	 */
 	private void initialize() {
 		frame = new JFrame("U-Boot Utilitary for Linux");
+		frame.getContentPane().setBackground(SystemColor.window);
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 569, 530);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -92,13 +104,24 @@ public class View {
 		 * Pannels
 		 */
 		JPanel panel = new JPanel();
+		panel.setBackground(SystemColor.window);
 		panel.setBounds(0, 12, 567, 35);
 		frame.getContentPane().add(panel);
 		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(10, 59, 545, 169);
+		panel_1.setBackground(SystemColor.window);
+		panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		panel_1.setBounds(12, 59, 543, 169);
 		frame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(SystemColor.window);
+		panel_2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		panel_2.setBounds(12, 240, 543, 113);
+		frame.getContentPane().add(panel_2);
+		panel_2.setLayout(null);
+		
 		
 		/*
 		 * Titles
@@ -140,7 +163,9 @@ public class View {
 		lblPort.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		
 		this.btnStartTftpServer = new JButton("Start TFTP server");
-		btnStartTftpServer.setBounds(377, 132, 156, 25);
+		btnStartTftpServer.setBackground(SystemColor.menu);
+		btnStartTftpServer.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
+		btnStartTftpServer.setBounds(375, 132, 156, 25);
 		panel_1.add(btnStartTftpServer);
 		this.btnStartTftpServer.addActionListener(new ActionListener() {
 
@@ -191,10 +216,76 @@ public class View {
 		lblDirectory.setBounds(26, 84, 70, 15);
 		panel_1.add(lblDirectory);
 		
-		JLabel lblPathServer = new JLabel("/tftpboot");
+		JLabel lblPathServer = new JLabel("/tftpboot/");
 		lblPathServer.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
 		lblPathServer.setBounds(112, 84, 70, 15);
 		panel_1.add(lblPathServer);
 		
+		
+		/*
+		 * Components pannel 2
+		 */
+		JLabel lblNetworkConfiguration = new JLabel("Network configuration");
+		lblNetworkConfiguration.setFont(new Font("Ubuntu Light", Font.PLAIN, 14));
+		lblNetworkConfiguration.setBounds(12, 12, 177, 15);
+		panel_2.add(lblNetworkConfiguration);
+		
+			/*
+			 * Server IP
+			 */
+		JLabel lblIpServer = new JLabel("Server IP");
+		lblIpServer.setFont(new Font("Ubuntu", Font.PLAIN, 13));
+		lblIpServer.setBounds(22, 39, 77, 15);
+		panel_2.add(lblIpServer);
+		
+		final JLabel lblIpServerValue = new JLabel("192.168.");
+		lblIpServerValue.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
+		lblIpServerValue.setBounds(91, 39, 58, 15);
+		panel_2.add(lblIpServerValue);
+		
+		final JSpinner spinner_ipServer1 = new JSpinner();
+		spinner_ipServer1.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
+		spinner_ipServer1.setModel(new SpinnerNumberModel(200, 1, 254, 1));
+		spinner_ipServer1.setBounds(142, 37, 46, 20);
+		panel_2.add(spinner_ipServer1);
+		
+		JSpinner spinner_ipServer2 = new JSpinner();
+		spinner_ipServer2.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
+		spinner_ipServer2.setModel(new SpinnerNumberModel(101, 1, 254, 1));
+		spinner_ipServer2.setBounds(192, 37, 46, 20);
+		panel_2.add(spinner_ipServer2);
+			
+			/*
+			 * Target IP
+			 */
+		JLabel lblIpTarget = new JLabel("Target IP");
+		lblIpTarget.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
+		lblIpTarget.setBounds(343, 39, 70, 15);
+		panel_2.add(lblIpTarget);
+		
+		final JLabel lblIpTargetValue = new JLabel(lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+".");
+		lblIpTargetValue.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
+		lblIpTargetValue.setBounds(411, 39, 82, 15);
+		panel_2.add(lblIpTargetValue);
+		
+		JButton btnSet = new JButton("Set");
+		btnSet.setBackground(SystemColor.menu);
+		btnSet.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
+		btnSet.setBounds(437, 76, 94, 25);
+		panel_2.add(btnSet);
+		
+		JSpinner spinner_ipTarget = new JSpinner();
+		spinner_ipTarget.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
+		spinner_ipTarget.setModel(new SpinnerNumberModel(1, 1, 254, 1));
+		spinner_ipTarget.setBounds(485, 36, 46, 20);
+		panel_2.add(spinner_ipTarget);
+		
+		spinner_ipServer1.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				lblIpTargetValue.setText(lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+".");
+			}
+		});
+		
+	
 	}
 }

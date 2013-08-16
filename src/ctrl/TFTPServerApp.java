@@ -108,6 +108,7 @@ public class TFTPServerApp {
             Path p = Paths.get(this.path+file);
             inputBuf = Files.readAllBytes(p);
             
+            
             while( bytesSent < inputBuf.length ) {
                 /*
                  * Note: this loop assumes that the buffer does not end on an
