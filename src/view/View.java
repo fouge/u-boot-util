@@ -30,11 +30,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.ParseException;
+import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpinnerListModel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JMenuBar;
@@ -47,6 +54,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.JFormattedTextField;
 import javax.swing.border.EtchedBorder;
 import java.awt.SystemColor;
+import java.awt.Choice;
+import javax.swing.JComboBox;
+import javax.swing.JTextPane;
 
 public class View {
 	
@@ -85,8 +95,8 @@ public class View {
 	 * Create the application.
 	 */
 	public View() {
-		initialize();
 		this.ctrl = new Controller(this);
+		initialize();
 	}
 
 	/**
@@ -94,31 +104,52 @@ public class View {
 	 */
 	private void initialize() {
 		frame = new JFrame("U-Boot Utilitary for Linux");
-		frame.getContentPane().setBackground(SystemColor.window);
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 569, 530);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
+		
+		
+		/*
+		 * 
+		 */
+		UIManager.put("OptionPane.background", SystemColor.window);
+		UIManager.put("OptionPane.buttonFont", new Font("Ubuntu Light", Font.BOLD, 12));
+		UIManager.put("OptionPane.font", new Font("Ubuntu Light", Font.BOLD, 12));
+		UIManager.put("JButton.background", SystemColor.window);
+		try {
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InstantiationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		/*
 		 * Pannels
 		 */
 		JPanel panel = new JPanel();
-		panel.setBackground(SystemColor.window);
 		panel.setBounds(0, 12, 567, 35);
 		frame.getContentPane().add(panel);
 		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBackground(SystemColor.window);
+		JPanel panel_1 = new JPanel();;
 		panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_1.setBounds(12, 59, 543, 169);
+		panel_1.setBounds(12, 59, 543, 136);
 		frame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 		
 		JPanel panel_2 = new JPanel();
-		panel_2.setBackground(SystemColor.window);
 		panel_2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_2.setBounds(12, 240, 543, 113);
+		panel_2.setBounds(12, 207, 543, 113);
 		frame.getContentPane().add(panel_2);
 		panel_2.setLayout(null);
 		
@@ -158,14 +189,14 @@ public class View {
 		 * Components panel_1
 		 */
 		JLabel lblPort = new JLabel("Port ");
-		lblPort.setBounds(26, 56, 29, 16);
+		lblPort.setBounds(22, 39, 29, 16);
 		panel_1.add(lblPort);
 		lblPort.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		
 		this.btnStartTftpServer = new JButton("Start TFTP server");
 		btnStartTftpServer.setBackground(SystemColor.menu);
 		btnStartTftpServer.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
-		btnStartTftpServer.setBounds(375, 132, 156, 25);
+		btnStartTftpServer.setBounds(375, 99, 156, 25);
 		panel_1.add(btnStartTftpServer);
 		this.btnStartTftpServer.addActionListener(new ActionListener() {
 
@@ -183,6 +214,7 @@ public class View {
 		this.spinner = new JSpinner();
 		spinner.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
 		spinner.setModel(new SpinnerNumberModel(69, 69, 65535, 1));
+		// TODO if not root, display warning message
 		System.out.println("Warning : you need to be root to start the server on port 69.");
 		spinner.addChangeListener(new ChangeListener() {
 			
@@ -200,6 +232,8 @@ public class View {
 				
 				if(spinnerValue==1024){
 					spinner.setValue((Integer)69);
+
+					// TODO if not root, display warning message
 					System.out.println("Warning : you need to be root to start the server on port 69.");
 				}
 				if(spinnerValue==70)
@@ -208,51 +242,62 @@ public class View {
 					spinner.setValue((Integer)1025);
 			}
 		});
-		spinner.setBounds(112, 56, 69, 17);
+		spinner.setBounds(108, 39, 65, 20);
 		panel_1.add(spinner);
 		
 		JLabel lblDirectory = new JLabel("Directory");
 		lblDirectory.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblDirectory.setBounds(26, 84, 70, 15);
+		lblDirectory.setBounds(22, 67, 70, 15);
 		panel_1.add(lblDirectory);
 		
 		JLabel lblPathServer = new JLabel("/tftpboot/");
 		lblPathServer.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
-		lblPathServer.setBounds(112, 84, 70, 15);
+		lblPathServer.setBounds(108, 67, 70, 15);
 		panel_1.add(lblPathServer);
 		
 		
 		/*
 		 * Components pannel 2
 		 */
+		/* TODO: add a "reload" button */
 		JLabel lblNetworkConfiguration = new JLabel("Network configuration");
 		lblNetworkConfiguration.setFont(new Font("Ubuntu Light", Font.PLAIN, 14));
 		lblNetworkConfiguration.setBounds(12, 12, 177, 15);
 		panel_2.add(lblNetworkConfiguration);
+		
+		final JComboBox<String> comboBox = new JComboBox<String>();
+		comboBox.setBackground(SystemColor.menu);
+		comboBox.setForeground(Color.BLACK);
+		comboBox.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
+		comboBox.setBounds(173, 7, 65, 20);
+		Vector<String> interfaces = null;
+		interfaces = (Vector<String>) this.ctrl.getInterfaces();
+		comboBox.setModel(new DefaultComboBoxModel<>(interfaces));
+		panel_2.add(comboBox);
 		
 			/*
 			 * Server IP
 			 */
 		JLabel lblIpServer = new JLabel("Server IP");
 		lblIpServer.setFont(new Font("Ubuntu", Font.PLAIN, 13));
-		lblIpServer.setBounds(22, 39, 77, 15);
+		lblIpServer.setBounds(22, 42, 77, 15);
 		panel_2.add(lblIpServer);
 		
 		final JLabel lblIpServerValue = new JLabel("192.168.");
 		lblIpServerValue.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblIpServerValue.setBounds(91, 39, 58, 15);
+		lblIpServerValue.setBounds(91, 42, 58, 15);
 		panel_2.add(lblIpServerValue);
 		
 		final JSpinner spinner_ipServer1 = new JSpinner();
 		spinner_ipServer1.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		spinner_ipServer1.setModel(new SpinnerNumberModel(200, 1, 254, 1));
-		spinner_ipServer1.setBounds(142, 37, 46, 20);
+		spinner_ipServer1.setBounds(142, 40, 46, 20);
 		panel_2.add(spinner_ipServer1);
 		
-		JSpinner spinner_ipServer2 = new JSpinner();
+		final JSpinner spinner_ipServer2 = new JSpinner();
 		spinner_ipServer2.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		spinner_ipServer2.setModel(new SpinnerNumberModel(101, 1, 254, 1));
-		spinner_ipServer2.setBounds(192, 37, 46, 20);
+		spinner_ipServer2.setBounds(192, 40, 46, 20);
 		panel_2.add(spinner_ipServer2);
 			
 			/*
@@ -260,24 +305,18 @@ public class View {
 			 */
 		JLabel lblIpTarget = new JLabel("Target IP");
 		lblIpTarget.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblIpTarget.setBounds(343, 39, 70, 15);
+		lblIpTarget.setBounds(343, 42, 70, 15);
 		panel_2.add(lblIpTarget);
 		
 		final JLabel lblIpTargetValue = new JLabel(lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+".");
 		lblIpTargetValue.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblIpTargetValue.setBounds(411, 39, 82, 15);
+		lblIpTargetValue.setBounds(411, 42, 82, 15);
 		panel_2.add(lblIpTargetValue);
-		
-		JButton btnSet = new JButton("Set");
-		btnSet.setBackground(SystemColor.menu);
-		btnSet.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
-		btnSet.setBounds(437, 76, 94, 25);
-		panel_2.add(btnSet);
 		
 		JSpinner spinner_ipTarget = new JSpinner();
 		spinner_ipTarget.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		spinner_ipTarget.setModel(new SpinnerNumberModel(1, 1, 254, 1));
-		spinner_ipTarget.setBounds(485, 36, 46, 20);
+		spinner_ipTarget.setModel(new SpinnerNumberModel(102, 1, 254, 1));
+		spinner_ipTarget.setBounds(485, 39, 46, 20);
 		panel_2.add(spinner_ipTarget);
 		
 		spinner_ipServer1.addChangeListener(new ChangeListener() {
@@ -286,6 +325,45 @@ public class View {
 			}
 		});
 		
+		JButton btnSet = new JButton("Set");
+		btnSet.setBackground(SystemColor.menu);
+		btnSet.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
+		btnSet.setBounds(437, 76, 94, 25);
+		panel_2.add(btnSet);
+		
+		btnSet.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String passwd = View.this.promptPassword("Sudo password");
+				if(passwd != null)
+					View.this.ctrl.setIp(comboBox.getSelectedItem().toString(), lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+"."+String.valueOf(spinner_ipServer2.getValue()));
+			}
+		});
+		
 	
+	}
+	
+	
+	
+	public String promptPassword(String dialogInputName){
+		// prompt sudo password
+		/* Panel */
+		JPanel panel = new JPanel();
+		/* Label */
+		JLabel label = new JLabel("Enter the password:");
+		/* Passwd field */
+		final JPasswordField pass = new JPasswordField(10);
+		
+		panel.add(label);
+		panel.add(pass);
+		
+		String[] options = {"Cancel", "Ok"};
+		int option = JOptionPane.showOptionDialog(null, panel, dialogInputName,JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[1]);
+		if(option==1){
+			return new String(pass.getPassword());
+		}
+		else
+			return null;
 	}
 }

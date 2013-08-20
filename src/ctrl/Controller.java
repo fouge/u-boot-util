@@ -6,6 +6,12 @@ package ctrl;
  * 
  */
 
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import view.View;
 
 public class Controller {
@@ -14,8 +20,17 @@ public class Controller {
 	
 	private ThreadServer threadServer;
 	
+	Enumeration<NetworkInterface> interfaces;
+	
 	public Controller(View view){
 		this.view = view;
+		
+		try {
+			this.interfaces = NetworkInterface.getNetworkInterfaces();
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/*
@@ -61,5 +76,41 @@ public class Controller {
 			return -1;
 		else
 			return this.threadServer.getPort();
+	}
+
+	public Vector<String> getInterfaces() {
+		Vector<String> ret = new Vector<String>();
+		try {
+			this.interfaces = NetworkInterface.getNetworkInterfaces();
+			
+			for (Enumeration<NetworkInterface> e = this.interfaces; e.hasMoreElements();)
+				ret.add(e.nextElement().getDisplayName());
+			
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+		if(ret.size()>0)
+			return ret;
+		else
+			ret.add("No interface available");
+		return ret;
+	}
+
+	/**
+	 * 
+	 * @param nic : Network Interface Card
+	 * @param ipServer
+	 */
+	public void setIp(String nic, String ipServer) {
+		
+		System.out.println("Modifying "+nic+", set IP to "+ipServer);
+		
+		// TODO execute command ifconfig with sudo
+		try {
+			NetworkInterface ni = NetworkInterface.getByName(nic);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+		
 	}
 }

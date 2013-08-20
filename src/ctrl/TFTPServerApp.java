@@ -32,7 +32,7 @@ public class TFTPServerApp {
 
     /** Port to use for TFTP connection. */
     private int intPort = -1;
-
+    
     /**
      * Size of bogus file to generate -- suggest greater than 512 bytes, and not
      * an even multiple, for optimal testing purposes.
@@ -72,8 +72,9 @@ public class TFTPServerApp {
 
             // set up TFTP
             tftp = new TFTP();
+
             tftp.open( intPort );
-           
+          
 
             // set up output stream
             outputStream = new ByteArrayOutputStream();
