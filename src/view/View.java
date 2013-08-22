@@ -71,6 +71,7 @@ public class View {
 	private Controller ctrl;
 	
 	private JFrame frame;
+	private HelpFrame popupHelpFrame;
 	
 	/*
 	 * Buttons
@@ -117,28 +118,18 @@ public class View {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
-		
-		
 		/*
-		 * 
+		 * Set UI like GTK
 		 */
-		UIManager.put("OptionPane.background", SystemColor.window);
-		UIManager.put("OptionPane.buttonFont", new Font("Ubuntu Light", Font.BOLD, 12));
-		UIManager.put("OptionPane.font", new Font("Ubuntu Light", Font.BOLD, 12));
-		UIManager.put("JButton.background", SystemColor.window);
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
 		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		JPanel panel = new JPanel();
@@ -171,9 +162,9 @@ public class View {
 		panel_1.add(lblTftpServerConfiguration);
 		
 		/*
-		 * Components main pannel
+		 * Components main panel
 		 */
-		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setBounds(12, 385, 543, 108);
 		frame.getContentPane().add(scrollPane);
@@ -268,7 +259,7 @@ public class View {
 		
 		
 		/*
-		 * Components pannel 2
+		 * Components panel 2
 		 */
 		/* TODO: add a "reload" button */
 		JLabel lblNetworkConfiguration = new JLabel("Network configuration");
@@ -346,49 +337,7 @@ public class View {
 		lblInterfaceipv.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		lblInterfaceipv.setBounds(407, 12, 58, 15);
 		panel_2.add(lblInterfaceipv);
-		
-		JLabel lblHelp = new JLabel("?");
-		lblHelp.setFont(new Font("Ubuntu", Font.PLAIN, 14));
-		lblHelp.setBounds(547, 0, 20, 23);
-		frame.getContentPane().add(lblHelp);
-		lblHelp.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				JFrame popup = new JFrame("Help");
-				popup.setResizable(false);
-				int popupWith = 300;
-				popup.setBounds(View.this.frame.getX()+View.this.frame.getWidth()/2-popupWith/2, View.this.frame.getY()+50, popupWith, 400); // popup frame is centered
-				popup.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-				popup.getContentPane().setLayout(null);
-				popup.setVisible(true);
-			}
-		});
-		
+
 		btnSet.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(spinner_ipServer2.getValue().equals(spinner_ipTarget.getValue()))
@@ -401,6 +350,48 @@ public class View {
 			}
 		});
 	
+		
+		
+		/*
+		 * Help panel
+		 */
+		JLabel lblHelp = new JLabel("?");
+		lblHelp.setFont(new Font("Ubuntu", Font.PLAIN, 14));
+		lblHelp.setBounds(547, 0, 20, 23);
+		frame.getContentPane().add(lblHelp);
+		lblHelp.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				if(View.this.popupHelpFrame == null){
+					View.this.popupHelpFrame = new HelpFrame(View.this.frame.getX()+View.this.frame.getWidth(), View.this.frame.getY());
+				}
+
+				View.this.popupHelpFrame.setVisible(true);
+			
+			}
+		});
 	}
 	
 	
