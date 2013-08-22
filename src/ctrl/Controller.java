@@ -100,17 +100,26 @@ public class Controller {
 	 * 
 	 * @param nic : Network Interface Card
 	 * @param ipServer
+	 * @param passwd 
 	 */
-	public void setIp(String nic, String ipServer) {
+	public void setIp(String nic, String ipServer, String passwd) {
 		
-		System.out.println("Modifying "+nic+", set IP to "+ipServer);
+		System.out.println("Modifying "+nic+", set IP address to "+ipServer);
 		
 		// TODO execute command ifconfig with sudo
+		Process p;
+		int ret = 1;
 		try {
-			NetworkInterface ni = NetworkInterface.getByName(nic);
-		} catch (SocketException e) {
-			e.printStackTrace();
-		}
+			String[] cmd = { "/bin/sh", "-c", "echo "+passwd+" | sudo -S ifconfig "+nic+" "+ipServer+" netmask 255.255.255.0 up"};		
+			p = Runtime.getRuntime().exec(cmd);
+			p.waitFor();
+			ret = p.exitValue();
+			p.destroy();
+		} catch (Exception e) {}
 		
+		if(ret == 0)
+			System.out.println("@IP successfully changed.");
+		else
+			System.out.println("ret :"+ret+" Important : Unable to change @IP.");
 	}
 }

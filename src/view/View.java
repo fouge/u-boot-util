@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JButton;
@@ -57,6 +58,13 @@ import java.awt.SystemColor;
 import java.awt.Choice;
 import javax.swing.JComboBox;
 import javax.swing.JTextPane;
+import java.awt.Toolkit;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class View {
 	
@@ -133,12 +141,8 @@ public class View {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		/*
-		 * Pannels
-		 */
 		JPanel panel = new JPanel();
-		panel.setBounds(0, 12, 567, 35);
+		panel.setBounds(97, 12, 371, 35);
 		frame.getContentPane().add(panel);
 		
 		JPanel panel_1 = new JPanel();;
@@ -256,6 +260,13 @@ public class View {
 		panel_1.add(lblPathServer);
 		
 		
+		  
+	 	JList list = new JList();
+		list.setBounds(375, 25, 156, 62);
+		list.setFocusable(false);
+		panel_1.add(list); 
+		
+		
 		/*
 		 * Components pannel 2
 		 */
@@ -266,10 +277,10 @@ public class View {
 		panel_2.add(lblNetworkConfiguration);
 		
 		final JComboBox<String> comboBox = new JComboBox<String>();
-		comboBox.setBackground(SystemColor.menu);
+		comboBox.setBackground(SystemColor.text);
 		comboBox.setForeground(Color.BLACK);
 		comboBox.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
-		comboBox.setBounds(173, 7, 65, 20);
+		comboBox.setBounds(466, 9, 65, 20);
 		Vector<String> interfaces = null;
 		interfaces = (Vector<String>) this.ctrl.getInterfaces();
 		comboBox.setModel(new DefaultComboBoxModel<>(interfaces));
@@ -313,7 +324,7 @@ public class View {
 		lblIpTargetValue.setBounds(411, 42, 82, 15);
 		panel_2.add(lblIpTargetValue);
 		
-		JSpinner spinner_ipTarget = new JSpinner();
+		final JSpinner spinner_ipTarget = new JSpinner();
 		spinner_ipTarget.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		spinner_ipTarget.setModel(new SpinnerNumberModel(102, 1, 254, 1));
 		spinner_ipTarget.setBounds(485, 39, 46, 20);
@@ -331,21 +342,73 @@ public class View {
 		btnSet.setBounds(437, 76, 94, 25);
 		panel_2.add(btnSet);
 		
-		btnSet.addActionListener(new ActionListener() {
+		JLabel lblInterfaceipv = new JLabel("Interface");
+		lblInterfaceipv.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
+		lblInterfaceipv.setBounds(407, 12, 58, 15);
+		panel_2.add(lblInterfaceipv);
+		
+		JLabel lblHelp = new JLabel("?");
+		lblHelp.setFont(new Font("Ubuntu", Font.PLAIN, 14));
+		lblHelp.setBounds(547, 0, 20, 23);
+		frame.getContentPane().add(lblHelp);
+		lblHelp.addMouseListener(new MouseListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String passwd = View.this.promptPassword("Sudo password");
-				if(passwd != null)
-					View.this.ctrl.setIp(comboBox.getSelectedItem().toString(), lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+"."+String.valueOf(spinner_ipServer2.getValue()));
+			public void mouseReleased(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				JFrame popup = new JFrame("Help");
+				popup.setResizable(false);
+				int popupWith = 300;
+				popup.setBounds(View.this.frame.getX()+View.this.frame.getWidth()/2-popupWith/2, View.this.frame.getY()+50, popupWith, 400); // popup frame is centered
+				popup.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+				popup.getContentPane().setLayout(null);
+				popup.setVisible(true);
 			}
 		});
 		
+		btnSet.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(spinner_ipServer2.getValue().equals(spinner_ipTarget.getValue()))
+					System.out.println("Important : IPs must be different.");
+				else {
+					String passwd = View.this.promptPassword("Sudo password");
+					if(passwd != null)
+						View.this.ctrl.setIp(comboBox.getSelectedItem().toString(), lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+"."+String.valueOf(spinner_ipServer2.getValue()), passwd);
+				}
+			}
+		});
 	
 	}
 	
 	
-	
+	/**
+	 * 
+	 * @param dialogInputName : Name of the window
+	 * @return password : String
+	 */
 	public String promptPassword(String dialogInputName){
 		// prompt sudo password
 		/* Panel */
@@ -365,5 +428,22 @@ public class View {
 		}
 		else
 			return null;
+	}
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
 	}
 }
