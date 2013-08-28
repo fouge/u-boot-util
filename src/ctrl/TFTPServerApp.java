@@ -150,6 +150,8 @@ public class TFTPServerApp {
         }
     }
 
+    
+    
     /**
      * Receives a bogus file from the TFTP client, prints the received file on
      * the screen, and resets the output stream.
@@ -291,18 +293,40 @@ public class TFTPServerApp {
         }
     }
     
+    
+    
+    
+    /**
+     * Verify if the server achieved to get the port open
+     * 
+     * @return true if port is open
+     * 			false otherwise
+     */
     public boolean portIsOpen(){
 		return tftp.isOpen();
 	}
     
+    /**
+     * Get the num of the port
+     * 
+     * @return num of port in use (-1 if port isn't open)
+     */
 	public int getPort(){
 		return this.intPort;
 	}
 	
+	/**
+	 * Get the path of the server
+	 * 
+	 * @return path of the server in a string (absolute path)
+	 */
 	public String getServerPath(){
 		return this.path;
 	}
     
+	/**
+	 * Close the port of the server (if open)
+	 */
     public void close(){
     	if(tftp.isOpen())
 		{

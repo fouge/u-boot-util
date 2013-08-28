@@ -1,6 +1,9 @@
 package view;
 
 /**
+ * @description Class that let the out stream printed to a component of the view. It must extend OutputStream.
+ * 				Methods need to be override to write the log in the visual component.
+ * 
  * @author Cyril Fougeray
  * @version 0.1
  * 
@@ -25,6 +28,11 @@ public class TextAreaOutputStream extends OutputStream {
    private final StringBuilder sb = new StringBuilder();
    private String title;
 
+   /**
+    * 
+    * @param textArea Visual component to write into
+    * @param title 
+    */
    public TextAreaOutputStream(final JTextArea textArea, String title) {
       this.textArea = textArea;
       this.title = title;
@@ -38,7 +46,10 @@ public class TextAreaOutputStream extends OutputStream {
    public void close() {
    }
 
-   @Override
+   /**
+    * write one characted in the visual component
+    * @param b Character to write
+    */
    public void write(int b) throws IOException {
 
       if (b == '\r')

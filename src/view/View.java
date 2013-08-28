@@ -65,6 +65,8 @@ import javax.swing.JPopupMenu;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.ListSelectionModel;
+
 
 public class View {
 	
@@ -84,6 +86,7 @@ public class View {
 	 */
 	JTextArea log;
 	
+	boolean isRoot = false;
 	/**
 	 * Launch the application.
 	 */
@@ -104,8 +107,12 @@ public class View {
 	 * Create the application.
 	 */
 	public View() {
+		System.out.println(System.getProperty("java.library.path"));
+		this.isRoot = System.getProperty("user.name").equals("root");
 		this.ctrl = new Controller(this);
 		initialize();
+		// TODO remove this line :
+		this.ctrl.getPortList();
 	}
 
 	/**
@@ -138,13 +145,13 @@ public class View {
 		
 		JPanel panel_1 = new JPanel();;
 		panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_1.setBounds(12, 59, 543, 136);
+		panel_1.setBounds(12, 59, 543, 166);
 		frame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_2.setBounds(12, 207, 543, 113);
+		panel_2.setBounds(12, 237, 543, 136);
 		frame.getContentPane().add(panel_2);
 		panel_2.setLayout(null);
 		
@@ -191,7 +198,7 @@ public class View {
 		this.btnStartTftpServer = new JButton("Start TFTP server");
 		btnStartTftpServer.setBackground(SystemColor.menu);
 		btnStartTftpServer.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
-		btnStartTftpServer.setBounds(375, 99, 156, 25);
+		btnStartTftpServer.setBounds(375, 129, 156, 25);
 		panel_1.add(btnStartTftpServer);
 		this.btnStartTftpServer.addActionListener(new ActionListener() {
 
@@ -209,8 +216,8 @@ public class View {
 		this.spinner = new JSpinner();
 		spinner.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
 		spinner.setModel(new SpinnerNumberModel(69, 69, 65535, 1));
-		// TODO if not root, display warning message
-		System.out.println("Warning : you need to be root to start the server on port 69.");
+		if(!this.isRoot)
+			System.out.println("Warning : you need to be root to start the server on port 69.");
 		spinner.addChangeListener(new ChangeListener() {
 			
 			@Override
@@ -228,8 +235,8 @@ public class View {
 				if(spinnerValue==1024){
 					spinner.setValue((Integer)69);
 
-					// TODO if not root, display warning message
-					System.out.println("Warning : you need to be root to start the server on port 69.");
+					if(!isRoot)
+						System.out.println("Warning : you need to be root to start the server on port 69.");
 				}
 				if(spinnerValue==70)
 					spinner.setValue((Integer)1025);
@@ -242,20 +249,37 @@ public class View {
 		
 		JLabel lblDirectory = new JLabel("Directory");
 		lblDirectory.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblDirectory.setBounds(22, 67, 70, 15);
+		lblDirectory.setBounds(22, 102, 70, 15);
 		panel_1.add(lblDirectory);
 		
 		JLabel lblPathServer = new JLabel("/tftpboot/");
 		lblPathServer.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
-		lblPathServer.setBounds(108, 67, 70, 15);
+		lblPathServer.setBounds(113, 102, 156, 15);
 		panel_1.add(lblPathServer);
 		
 		
-		  
-	 	JList list = new JList();
-		list.setBounds(375, 25, 156, 62);
-		list.setFocusable(false);
-		panel_1.add(list); 
+		Vector<String> data = this.ctrl.setAndLoadTftpDir("/tftpboot/");
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(350, 39, 181, 78);
+		panel_1.add(scrollPane_1);
+		
+		if(data.size()==0){
+			lblPathServer.setText("/tftpboot/ doesn't exist.");
+			// TODO a button : mkdir /tftpboot
+		}
+		else
+		{
+			JList list = new JList(data);
+			scrollPane_1.setViewportView(list);
+			list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			list.setFocusable(false);
+		}
+		
+		JLabel lblFilesAvailable = new JLabel("Files available");
+		lblFilesAvailable.setBounds(250, 41, 88, 13);
+		lblFilesAvailable.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
+		panel_1.add(lblFilesAvailable);
 		
 		
 		/*
@@ -271,7 +295,7 @@ public class View {
 		comboBox.setBackground(SystemColor.text);
 		comboBox.setForeground(Color.BLACK);
 		comboBox.setFont(new Font("Ubuntu Light", Font.PLAIN, 12));
-		comboBox.setBounds(466, 9, 65, 20);
+		comboBox.setBounds(84, 39, 65, 20);
 		Vector<String> interfaces = null;
 		interfaces = (Vector<String>) this.ctrl.getInterfaces();
 		comboBox.setModel(new DefaultComboBoxModel<>(interfaces));
@@ -282,24 +306,24 @@ public class View {
 			 */
 		JLabel lblIpServer = new JLabel("Server IP");
 		lblIpServer.setFont(new Font("Ubuntu", Font.PLAIN, 13));
-		lblIpServer.setBounds(22, 42, 77, 15);
+		lblIpServer.setBounds(22, 69, 77, 15);
 		panel_2.add(lblIpServer);
 		
 		final JLabel lblIpServerValue = new JLabel("192.168.");
 		lblIpServerValue.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblIpServerValue.setBounds(91, 42, 58, 15);
+		lblIpServerValue.setBounds(91, 69, 58, 15);
 		panel_2.add(lblIpServerValue);
 		
 		final JSpinner spinner_ipServer1 = new JSpinner();
 		spinner_ipServer1.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		spinner_ipServer1.setModel(new SpinnerNumberModel(200, 1, 254, 1));
-		spinner_ipServer1.setBounds(142, 40, 46, 20);
+		spinner_ipServer1.setBounds(142, 67, 46, 20);
 		panel_2.add(spinner_ipServer1);
 		
 		final JSpinner spinner_ipServer2 = new JSpinner();
 		spinner_ipServer2.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		spinner_ipServer2.setModel(new SpinnerNumberModel(101, 1, 254, 1));
-		spinner_ipServer2.setBounds(192, 40, 46, 20);
+		spinner_ipServer2.setBounds(192, 67, 46, 20);
 		panel_2.add(spinner_ipServer2);
 			
 			/*
@@ -307,18 +331,18 @@ public class View {
 			 */
 		JLabel lblIpTarget = new JLabel("Target IP");
 		lblIpTarget.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblIpTarget.setBounds(343, 42, 70, 15);
+		lblIpTarget.setBounds(343, 69, 70, 15);
 		panel_2.add(lblIpTarget);
 		
 		final JLabel lblIpTargetValue = new JLabel(lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+".");
 		lblIpTargetValue.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblIpTargetValue.setBounds(411, 42, 82, 15);
+		lblIpTargetValue.setBounds(411, 69, 82, 15);
 		panel_2.add(lblIpTargetValue);
 		
 		final JSpinner spinner_ipTarget = new JSpinner();
 		spinner_ipTarget.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		spinner_ipTarget.setModel(new SpinnerNumberModel(102, 1, 254, 1));
-		spinner_ipTarget.setBounds(485, 39, 46, 20);
+		spinner_ipTarget.setBounds(485, 66, 46, 20);
 		panel_2.add(spinner_ipTarget);
 		
 		spinner_ipServer1.addChangeListener(new ChangeListener() {
@@ -330,12 +354,12 @@ public class View {
 		JButton btnSet = new JButton("Set");
 		btnSet.setBackground(SystemColor.menu);
 		btnSet.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
-		btnSet.setBounds(437, 76, 94, 25);
+		btnSet.setBounds(437, 99, 94, 25);
 		panel_2.add(btnSet);
 		
 		JLabel lblInterfaceipv = new JLabel("Interface");
 		lblInterfaceipv.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblInterfaceipv.setBounds(407, 12, 58, 15);
+		lblInterfaceipv.setBounds(22, 42, 58, 15);
 		panel_2.add(lblInterfaceipv);
 
 		btnSet.addActionListener(new ActionListener() {
@@ -343,9 +367,14 @@ public class View {
 				if(spinner_ipServer2.getValue().equals(spinner_ipTarget.getValue()))
 					System.out.println("Important : IPs must be different.");
 				else {
+					/* Set server IP */
 					String passwd = View.this.promptPassword("Sudo password");
 					if(passwd != null)
 						View.this.ctrl.setIp(comboBox.getSelectedItem().toString(), lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+"."+String.valueOf(spinner_ipServer2.getValue()), passwd);
+					
+					/* Set target IP */
+					// TODO method to set target IP
+					System.out.println("Set target IP : not implemented yet. Use minicom to communicate with U-Boot:\nU-Boot> setenv ipaddr "+lblIpTargetValue.getText()+spinner_ipTarget.getValue());
 				}
 			}
 		});
@@ -392,6 +421,8 @@ public class View {
 			
 			}
 		});
+		
+		
 	}
 	
 	
@@ -419,22 +450,5 @@ public class View {
 		}
 		else
 			return null;
-	}
-	private static void addPopup(Component component, final JPopupMenu popup) {
-		component.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			private void showMenu(MouseEvent e) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-		});
 	}
 }

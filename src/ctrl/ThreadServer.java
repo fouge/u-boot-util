@@ -3,13 +3,17 @@ package ctrl;
 /**
  * @author Cyril Fougeray
  * @version 0.1
- * 
+ * Thread of the TFTP server
  */
 
 public class ThreadServer extends Thread {
 	private TFTPServerApp server;
 	private boolean serverRunning;
 	
+	/**
+	 * 
+	 * @param port : port used to start the server
+	 */
 	public ThreadServer(int port){
 		System.out.println("Starting new thread for TFTP server (port "+String.valueOf(port)+").");
 		this.server = new TFTPServerApp(port);
