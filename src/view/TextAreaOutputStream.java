@@ -38,11 +38,9 @@ public class TextAreaOutputStream extends OutputStream {
       this.title = title;
    }
 
-   @Override
    public void flush() {
    }
 
-   @Override
    public void close() {
    }
 

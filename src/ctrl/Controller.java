@@ -20,7 +20,7 @@ import view.View;
 
 
 /**
- * @description Class that manage the app. Used as an interface between the view and the "mechanic" of the application.
+ * Class that manage the app. Used as an interface between the view and the "mechanic" of the application.
  * 
  * @author Cyril Fougeray
  *
