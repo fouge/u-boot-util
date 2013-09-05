@@ -1,12 +1,6 @@
 package view;
 
 
-/**
- * @author Cyril Fougeray
- * @version 0.1
- * 
- */
-
 
 import java.awt.EventQueue;
 
@@ -67,7 +61,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ListSelectionModel;
 
-
+/**
+ * View of the main window. 
+ * 3 panels used : TFTP configuration, Network configuration and log.
+ * 
+ * @author Cyril Fougeray (cyril.fougeray@gmail.com)
+ * @version 0.1
+ * 
+ */
 public class View {
 	
 	private Controller ctrl;

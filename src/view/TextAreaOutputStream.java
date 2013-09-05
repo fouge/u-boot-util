@@ -1,13 +1,5 @@
 package view;
 
-/**
- * @description Class that let the out stream printed to a component of the view. It must extend OutputStream.
- * 				Methods need to be override to write the log in the visual component.
- * 
- * @author Cyril Fougeray
- * @version 0.1
- * 
- */
 
 import java.awt.Color;
 import java.io.IOException;
@@ -21,7 +13,14 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-
+/**
+ * Class that let the out stream printed to a component of the view. It must extend OutputStream.
+ * 				Methods need to be override to write the log in the visual component.
+ * 
+ * @author Cyril Fougeray
+ * @version 0.1
+ * 
+ */
 public class TextAreaOutputStream extends OutputStream {
 
    private final JTextArea textArea;

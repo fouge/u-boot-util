@@ -1,11 +1,11 @@
 package ctrl;
 
 /**
- * @author Cyril Fougeray
- * @version 0.1
  * Thread of the TFTP server
+ * 
+ * @author Cyril Fougeray (cyril.fougeray@gmail.com)
+ * @version 0.1
  */
-
 public class ThreadServer extends Thread {
 	private TFTPServerApp server;
 	private boolean serverRunning;

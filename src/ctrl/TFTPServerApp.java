@@ -12,9 +12,9 @@ import java.util.Locale;
 import org.apache.commons.net.tftp.*;
 
 /**
- * @description Class that handle a TFTP server. Used to send (not receive) file 
- * 				to an U-Boot-equipped system. Port used is configurable, if the
- * 				remote system can handle it.
+ * Class that handle a TFTP server. Used to send (not receive) file 
+ * to an U-Boot-equipped system. Port used is configurable, if the
+ * remote system can handle it.
  * 
  * <br>
  * <br>
@@ -24,9 +24,9 @@ import org.apache.commons.net.tftp.*;
  * @author Jennifer Hodgdon, Poplar ProductivityWare, www.poplarware.com in
  *         conjunction with an article at:
  *         http://www.poplarware.com/udpjava.html
- * @author Cyril Fougeray
+ * @author Cyril Fougeray (cyril.fougeray@gmail.com)
  * 			updated to fit with U-Boot Util.
- * 
+ * @version 1.0
  */
 public class TFTPServerApp {
 
@@ -53,7 +53,7 @@ public class TFTPServerApp {
     
     
     /**
-     * Default constructor: sets up for TFTP, using default port (2269).
+     * Default constructor: sets up for TFTP, using default port (69).
      */
     public TFTPServerApp(){
         this(69); // UDP port by default

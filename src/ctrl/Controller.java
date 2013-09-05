@@ -22,7 +22,7 @@ import view.View;
 /**
  * Class that manage the app. Used as an interface between the view and the "mechanic" of the application.
  * 
- * @author Cyril Fougeray
+ * @author Cyril Fougeray (cyril.fougeray@gmail.com)
  *
  */
 public class Controller {
@@ -37,10 +37,10 @@ public class Controller {
 	boolean isRoot = System.getProperty("user.name").equals("root");
 
 	/**
-	 * Construcor of the controller.
+	 * Constructor of the controller.
 	 * 
-	 * @param view : App class, can be used to modify some components of View.
-	 * TODO Obsersable class ?
+	 * @param view App class, can be used to modify some components of View.
+	 * @to.do Obsersable class ?
 	 */
 	public Controller(View view){
 		this.view = view;
@@ -59,8 +59,8 @@ public class Controller {
 	/**
 	 * Start or interrupt the thread which manage TFTP server
 	 * 
-	 * @param port : port to start tftp server. port 69 is default but needs to have the application started as root.
-	 * @return :
+	 * @param port port to start tftp server. port 69 is default but needs to have the application started as root.
+	 * @return
 	 * 		false : server is interrupted
 	 * 		true : server is running
 	 */
@@ -113,7 +113,7 @@ public class Controller {
 	/**
 	 * Get every connected interfaces
 	 * 
-	 * @return Return a vector of every connected interfaces (link with the system must be physically done for eth).
+	 * @return A vector of every connected interfaces (link with the system must be physically done for eth).
 	 */
 	public Vector<String> getInterfaces() {
 		Vector<String> ret = new Vector<String>();
