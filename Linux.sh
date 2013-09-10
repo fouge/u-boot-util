@@ -1,0 +1,1 @@
+sudo /usr/lib/jvm/java-7-openjdk-amd64/bin/java -Djava.library.path=/home/fouge/Documents/EclipseWorkspace/u-boot-util/lib -Dfile.encoding=UTF-8 -classpath /home/fouge/Documents/EclipseWorkspace/u-boot-util/bin:/home/fouge/Documents/EclipseWorkspace/u-boot-util/lib/commons-net-3.3.jar:/home/fouge/Documents/EclipseWorkspace/u-boot-util/lib/RXTXcomm.jar view.View

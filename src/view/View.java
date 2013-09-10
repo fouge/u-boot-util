@@ -9,7 +9,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import java.awt.BorderLayout;
+
 import javax.swing.JLabel;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,7 +21,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JButton;
 
 import ctrl.Controller;
+
 import javax.swing.JTextArea;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -48,17 +52,23 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.JFormattedTextField;
 import javax.swing.border.EtchedBorder;
+
 import java.awt.SystemColor;
 import java.awt.Choice;
+
 import javax.swing.JComboBox;
 import javax.swing.JTextPane;
+
 import java.awt.Toolkit;
+
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import javax.swing.ListSelectionModel;
 
 /**
@@ -108,7 +118,7 @@ public class View {
 	 * Create the application.
 	 */
 	public View() {
-		System.out.println(System.getProperty("java.library.path"));
+
 		this.isRoot = System.getProperty("user.name").equals("root");
 		this.ctrl = new Controller(this);
 		initialize();

@@ -31,6 +31,8 @@ public class Controller {
 	
 	private ThreadServer threadServer;
 	
+	private SerialJNI serIface;
+	
 	/** Network interfaces, used to set server IP */
 	Enumeration<NetworkInterface> interfaces;
 	
@@ -52,8 +54,8 @@ public class Controller {
 			e.printStackTrace();
 		}
 		
-		
-		
+		serIface = new SerialJNI();
+		serIface.serial_write("ttyACM0", "mtest\n\r");
 	}
 	
 	/**
@@ -172,6 +174,9 @@ public class Controller {
 	 * @return portList : Vector of 
 	 */
 	public Vector<String> getPortList() {
+		
+		System.loadLibrary("rxtxSerial");
+		
 		Enumeration<CommPortIdentifier> portList;
 		Vector<String> portVect = new Vector<String>();
 		portList = CommPortIdentifier.getPortIdentifiers();
