@@ -15,6 +15,7 @@
  *		gcc -fPIC -o libserial.so -shared -I/usr/lib/jvm/java-7-openjdk-amd64/include/ -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux/ serial.c
  */
 
+int fd = -1; /* File descriptor for the port */
 
 /*
  * Class:     ctrl_JNI
@@ -24,7 +25,8 @@
  * Returns the file descriptor on success or -1 on error.
  */
 JNIEXPORT jint JNICALL Java_ctrl_SerialJNI_open_1port (JNIEnv * env, jobject obj, jstring str){
-  int fd; /* File descriptor for the port */
+
+  int n;
 
 const char *file = (*env)->GetStringUTFChars(env, str, 0);
 
@@ -35,12 +37,30 @@ const char *file = (*env)->GetStringUTFChars(env, str, 0);
     * Could not open the port.
     */
 
-    perror("open_port: Unable to open /dev/ttyf1 - ");
+    perror("SERIAL : open_port: Unable to open file - ");
   }
   else
     fcntl(fd, F_SETFL, 0);
+
+  if (n < 0)
+    fputs("SERIAL : write() failed!\n", stderr);
 
   return (fd);
 }
 
 
+JNIEXPORT jint JNICALL Java_ctrl_SerialJNI_write(JNIEnv * env, jobject obj, jchar c){
+    if(fd!=-1)
+      return write(fd, &c, 1);
+}
+
+
+JNIEXPORT jchar JNICALL Java_ctrl_SerialJNI_read_1char(JNIEnv * env, jobject obj){
+    fputs("SERIAL : read() not implemented yet.", stdout);
+    return 0;
+}
+
+JNIEXPORT jint JNICALL Java_ctrl_SerialJNI_close (JNIEnv * env, jobject obj){
+    fd=-1;
+    return close(fd);
+}

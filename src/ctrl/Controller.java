@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import server.ThreadServer;
+import target.SerialJNI;
+import target.Target;
 import view.View;
 
 
@@ -31,7 +34,7 @@ public class Controller {
 	
 	private ThreadServer threadServer;
 	
-	private SerialJNI serIface;
+	private Target target;
 	
 	/** Network interfaces, used to set server IP */
 	Enumeration<NetworkInterface> interfaces;
@@ -50,12 +53,10 @@ public class Controller {
 		try {
 			this.interfaces = NetworkInterface.getNetworkInterfaces();
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		serIface = new SerialJNI();
-		serIface.serial_write("ttyACM0", "mtest\n\r");
+		this.target = new Target();
 	}
 	
 	/**
@@ -113,7 +114,8 @@ public class Controller {
 	}
 
 	/**
-	 * Get every connected interfaces
+	 * Get every connected network interfaces 
+	 * these are used for TFTP server)
 	 * 
 	 * @return A vector of every connected interfaces (link with the system must be physically done for eth).
 	 */
@@ -144,7 +146,7 @@ public class Controller {
 	 * 
 	 * TODO Use a more secure way to execute this function because password is stored clearly in memory.
 	 */
-	public void setIp(String nic, String ipServer, String passwd) {
+	public void setServerIp(String nic, String ipServer, String passwd) {
 		
 		System.out.println("Modifying "+nic+", set IP address to "+ipServer);
 		
@@ -173,7 +175,7 @@ public class Controller {
 	 * 
 	 * @return portList : Vector of 
 	 */
-	public Vector<String> getPortList() {
+/*	public Vector<String> getPortList() {
 		
 		System.loadLibrary("rxtxSerial");
 		
@@ -191,7 +193,7 @@ public class Controller {
 		System.out.println(String.valueOf(portVect.size())+" serial ports");
 
 		return portVect;
-	}
+	} */
 
 
 	/**
@@ -250,5 +252,11 @@ public class Controller {
 		
 		return files;
 		
+	}
+	
+	
+	
+	public void setTargetIP(String ip){
+		this.target.setIP(ip);
 	}
 }

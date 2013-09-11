@@ -1,8 +1,8 @@
 # Compile Java class and put the class file in bin/
-javac src/ctrl/SerialJNI.java -d bin/
+javac src/target/SerialJNI.java -d bin/
 
 # Generate header
-cd bin && javah ctrl.SerialJNI && cd ..
+cd bin && javah target.SerialJNI && cd ..
 
 #Copy header to jni directory
-cp bin/ctrl_SerialJNI.h jni/
+cp bin/target_SerialJNI.h jni/

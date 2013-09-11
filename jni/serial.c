@@ -4,7 +4,7 @@
 
 #include <jni.h>
 #include <stdio.h>
-#include "ctrl_SerialJNI.h"
+#include "target_SerialJNI.h"
 #include <string.h>  /* String function definitions */
 #include <unistd.h>  /* UNIX standard function definitions */
 #include <fcntl.h>   /* File control definitions */
@@ -24,7 +24,7 @@ int fd = -1; /* File descriptor for the port */
  *
  * Returns the file descriptor on success or -1 on error.
  */
-JNIEXPORT jint JNICALL Java_ctrl_SerialJNI_open_1port (JNIEnv * env, jobject obj, jstring str){
+JNIEXPORT jint JNICALL Java_target_SerialJNI_open_1port (JNIEnv * env, jobject obj, jstring str){
 
   int n;
 
@@ -42,24 +42,25 @@ const char *file = (*env)->GetStringUTFChars(env, str, 0);
   else
     fcntl(fd, F_SETFL, 0);
 
-
-  
   if (n < 0)
-  fputs("SERIAL : write() failed!\n", stderr);
+    fputs("SERIAL : write() failed!\n", stderr);
+
   return (fd);
 }
 
 
-JNIEXPORT jint JNICALL Java_ctrl_SerialJNI_write(JNIEnv * env, jobject obj, jchar c){
-    return write(fd, &c, 1);
+JNIEXPORT jint JNICALL Java_target_SerialJNI_write(JNIEnv * env, jobject obj, jchar c){
+    if(fd!=-1)
+      return write(fd, &c, 1);
 }
 
 
-JNIEXPORT jchar JNICALL Java_ctrl_SerialJNI_read_1char(JNIEnv * env, jobject obj){
+JNIEXPORT jchar JNICALL Java_target_SerialJNI_read_1char(JNIEnv * env, jobject obj){
     fputs("SERIAL : read() not implemented yet.", stdout);
     return 0;
 }
 
-JNIEXPORT jint JNICALL Java_ctrl_SerialJNI_close (JNIEnv * env, jobject obj){
+JNIEXPORT jint JNICALL Java_target_SerialJNI_close (JNIEnv * env, jobject obj){
+    fd=-1;
     return close(fd);
 }

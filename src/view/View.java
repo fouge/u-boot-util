@@ -122,8 +122,6 @@ public class View {
 		this.isRoot = System.getProperty("user.name").equals("root");
 		this.ctrl = new Controller(this);
 		initialize();
-		// TODO remove this line :
-		this.ctrl.getPortList();
 	}
 
 	/**
@@ -379,13 +377,17 @@ public class View {
 					System.out.println("Important : IPs must be different.");
 				else {
 					/* Set server IP */
-					String passwd = View.this.promptPassword("Sudo password");
-					if(passwd != null)
-						View.this.ctrl.setIp(comboBox.getSelectedItem().toString(), lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+"."+String.valueOf(spinner_ipServer2.getValue()), passwd);
+					if(View.this.isRoot){
+						View.this.ctrl.setServerIp(comboBox.getSelectedItem().toString(), lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+"."+String.valueOf(spinner_ipServer2.getValue()), "");
+					}
+					else {
+						String passwd = View.this.promptPassword("Sudo password");
+						if(passwd != null) /* Cancel */
+							View.this.ctrl.setServerIp(comboBox.getSelectedItem().toString(), lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+"."+String.valueOf(spinner_ipServer2.getValue()), passwd);
+					}
 					
 					/* Set target IP */
-					// TODO method to set target IP
-					System.out.println("Set target IP : not implemented yet. Use minicom to communicate with U-Boot:\nU-Boot> setenv ipaddr "+lblIpTargetValue.getText()+spinner_ipTarget.getValue());
+						View.this.ctrl.setTargetIP(lblIpTargetValue.getText()+String.valueOf(spinner_ipTarget.getValue()));
 				}
 			}
 		});

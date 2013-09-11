@@ -1,4 +1,4 @@
-package ctrl;
+package server;
 
 /**
  * Thread of the TFTP server

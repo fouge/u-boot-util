@@ -1,4 +1,4 @@
-package ctrl;
+package server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
