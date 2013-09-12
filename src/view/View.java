@@ -70,6 +70,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.ListSelectionModel;
+import java.awt.ScrollPane;
 
 /**
  * View of the main window. 
@@ -89,13 +90,13 @@ public class View {
 	/*
 	 * Buttons
 	 */
-	JButton btnStartTftpServer;
-	JSpinner spinner;
+	private JButton btnStartTftpServer;
+	private JSpinner spinner;
 	
 	/*
 	 * Text areas
 	 */
-	JTextArea log;
+	private JTextPane log;
 	
 	boolean isRoot = false;
 	/**
@@ -130,7 +131,7 @@ public class View {
 	private void initialize() {
 		frame = new JFrame("U-Boot Utilitary for Linux");
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 569, 530);
+		frame.setBounds(100, 100, 900, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -149,20 +150,28 @@ public class View {
 			e1.printStackTrace();
 		}
 		JPanel panel = new JPanel();
-		panel.setBounds(97, 12, 371, 35);
+		panel.setBackground(SystemColor.window);
+		panel.setBounds(300, 12, 300, 35);
 		frame.getContentPane().add(panel);
 		
 		JPanel panel_1 = new JPanel();;
 		panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_1.setBounds(12, 59, 543, 166);
+		panel_1.setBounds(12, 58, 478, 190);
 		frame.getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		panel_2.setBounds(12, 237, 543, 136);
+		panel_2.setBounds(12, 260, 478, 166);
 		frame.getContentPane().add(panel_2);
 		panel_2.setLayout(null);
+		
+		
+		JPanel panel_3 = new JPanel();
+		panel_3.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		panel_3.setBounds(502, 59, 384, 367);
+		frame.getContentPane().add(panel_3);
+		panel_3.setLayout(null);
 		
 		
 		/*
@@ -177,24 +186,55 @@ public class View {
 		lblTftpServerConfiguration.setBounds(12, 12, 209, 15);
 		panel_1.add(lblTftpServerConfiguration);
 		
+		
+		
 		/*
 		 * Components main panel
 		 */
 		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setBounds(12, 385, 543, 108);
+		scrollPane.setBounds(12, 438, 874, 128);
 		frame.getContentPane().add(scrollPane);
 		
 		
-		this.log = new JTextArea();
+		this.log = new JTextPane();
 		scrollPane.setViewportView(log);
 		this.log.setFont(new Font("DejaVu Sans Light", Font.PLAIN, 12));
 		this.log.setForeground(Color.WHITE);
 		this.log.setBackground(Color.BLACK);
 		
 		/** Output stream is redirected to JTextArea */
-		TextAreaOutputStream systemOut = new TextAreaOutputStream(this.log, "Log");
+		TextPaneOutputStream systemOut = new TextPaneOutputStream(this.log, "Log");
 		System.setOut(new PrintStream(systemOut));
+		
+		/*
+		 * Help
+		 */
+		JLabel lblHelp = new JLabel("?");
+		lblHelp.setFont(new Font("Ubuntu", Font.PLAIN, 14));
+		lblHelp.setBounds(866, 0, 20, 21);
+		frame.getContentPane().add(lblHelp);
+		lblHelp.addMouseListener(new MouseListener() {
+			/* Action only when clicked */
+			public void mouseReleased(MouseEvent arg0) {
+			}
+			public void mousePressed(MouseEvent arg0) {
+			}
+			public void mouseExited(MouseEvent arg0) {
+			}
+			public void mouseEntered(MouseEvent arg0) {
+			}
+			
+			public void mouseClicked(MouseEvent arg0) {
+				
+				if(View.this.popupHelpFrame == null){
+					View.this.popupHelpFrame = new HelpFrame(View.this.frame.getX()+View.this.frame.getWidth(), View.this.frame.getY());
+				}
+
+				View.this.popupHelpFrame.setVisible(true);
+			
+			}
+		});
 		
 		/*
 		 * Components panel_1
@@ -207,7 +247,7 @@ public class View {
 		this.btnStartTftpServer = new JButton("Start TFTP server");
 		btnStartTftpServer.setBackground(SystemColor.menu);
 		btnStartTftpServer.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
-		btnStartTftpServer.setBounds(375, 129, 156, 25);
+		btnStartTftpServer.setBounds(310, 153, 156, 25);
 		panel_1.add(btnStartTftpServer);
 		this.btnStartTftpServer.addActionListener(new ActionListener() {
 
@@ -270,7 +310,7 @@ public class View {
 		Vector<String> data = this.ctrl.setAndLoadTftpDir("/tftpboot/");
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(350, 39, 181, 78);
+		scrollPane_1.setBounds(281, 63, 181, 78);
 		panel_1.add(scrollPane_1);
 		
 		if(data.size()==0){
@@ -286,7 +326,7 @@ public class View {
 		}
 		
 		JLabel lblFilesAvailable = new JLabel("Files available");
-		lblFilesAvailable.setBounds(250, 41, 88, 13);
+		lblFilesAvailable.setBounds(281, 41, 88, 13);
 		lblFilesAvailable.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		panel_1.add(lblFilesAvailable);
 		
@@ -320,19 +360,19 @@ public class View {
 		
 		final JLabel lblIpServerValue = new JLabel("192.168.");
 		lblIpServerValue.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblIpServerValue.setBounds(91, 69, 58, 15);
+		lblIpServerValue.setBounds(32, 90, 58, 15);
 		panel_2.add(lblIpServerValue);
 		
 		final JSpinner spinner_ipServer1 = new JSpinner();
 		spinner_ipServer1.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		spinner_ipServer1.setModel(new SpinnerNumberModel(200, 1, 254, 1));
-		spinner_ipServer1.setBounds(142, 67, 46, 20);
+		spinner_ipServer1.setBounds(84, 87, 46, 20);
 		panel_2.add(spinner_ipServer1);
 		
 		final JSpinner spinner_ipServer2 = new JSpinner();
 		spinner_ipServer2.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		spinner_ipServer2.setModel(new SpinnerNumberModel(101, 1, 254, 1));
-		spinner_ipServer2.setBounds(192, 67, 46, 20);
+		spinner_ipServer2.setBounds(131, 87, 46, 20);
 		panel_2.add(spinner_ipServer2);
 			
 			/*
@@ -340,18 +380,18 @@ public class View {
 			 */
 		JLabel lblIpTarget = new JLabel("Target IP");
 		lblIpTarget.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblIpTarget.setBounds(343, 69, 70, 15);
+		lblIpTarget.setBounds(275, 69, 70, 15);
 		panel_2.add(lblIpTarget);
 		
 		final JLabel lblIpTargetValue = new JLabel(lblIpServerValue.getText()+String.valueOf(spinner_ipServer1.getValue())+".");
 		lblIpTargetValue.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
-		lblIpTargetValue.setBounds(411, 69, 82, 15);
+		lblIpTargetValue.setBounds(285, 90, 82, 15);
 		panel_2.add(lblIpTargetValue);
 		
 		final JSpinner spinner_ipTarget = new JSpinner();
 		spinner_ipTarget.setFont(new Font("Ubuntu Light", Font.PLAIN, 13));
 		spinner_ipTarget.setModel(new SpinnerNumberModel(102, 1, 254, 1));
-		spinner_ipTarget.setBounds(485, 66, 46, 20);
+		spinner_ipTarget.setBounds(356, 87, 46, 20);
 		panel_2.add(spinner_ipTarget);
 		
 		spinner_ipServer1.addChangeListener(new ChangeListener() {
@@ -363,7 +403,7 @@ public class View {
 		JButton btnSet = new JButton("Set");
 		btnSet.setBackground(SystemColor.menu);
 		btnSet.setFont(new Font("Ubuntu Light", Font.BOLD, 12));
-		btnSet.setBounds(437, 99, 94, 25);
+		btnSet.setBounds(372, 129, 94, 25);
 		panel_2.add(btnSet);
 		
 		JLabel lblInterfaceipv = new JLabel("Interface");
@@ -391,49 +431,32 @@ public class View {
 				}
 			}
 		});
-	
 		
 		
 		/*
-		 * Help panel
+		 * Components panel 3 U-Boot consoles
 		 */
-		JLabel lblHelp = new JLabel("?");
-		lblHelp.setFont(new Font("Ubuntu", Font.PLAIN, 14));
-		lblHelp.setBounds(547, 0, 20, 23);
-		frame.getContentPane().add(lblHelp);
-		lblHelp.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				
-				if(View.this.popupHelpFrame == null){
-					View.this.popupHelpFrame = new HelpFrame(View.this.frame.getX()+View.this.frame.getWidth(), View.this.frame.getY());
-				}
+		JLabel label = new JLabel("U-Boot console");
+		label.setBounds(12, 12, 139, 16);
+		label.setFont(new Font("Ubuntu Light", Font.PLAIN, 14));
+		panel_3.add(label);
+		
+		JComboBox comboBox_1 = new JComboBox();
+		comboBox_1.setBounds(301, 10, 71, 23);
+		panel_3.add(comboBox_1);		
+		
+		JScrollPane scrollPane_2 = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane_2.setBounds(12, 42, 360, 313);
+		panel_3.add(scrollPane_2);
+		
+		JTextPane textPane = new JTextPane();
+		scrollPane_2.setViewportView(textPane);
+		textPane.setForeground(Color.WHITE);
+		textPane.setBackground(Color.BLACK);
+		textPane.setFont(new Font("DejaVu Sans Light", Font.PLAIN, 12));
 
-				View.this.popupHelpFrame.setVisible(true);
-			
-			}
-		});
+
 		
 		
 	}
